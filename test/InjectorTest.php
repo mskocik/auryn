@@ -27,9 +27,44 @@ class InjectorTest extends TestCase
         );
     }
 
-    public function testMakeInstanceWithParamDefaultBeingExplicitlySetToNullWithAutoloading()
+    public function testMakeInstanceWithParamDefaultBeingExplicitlySetToNull()
     {
       $injector = new Injector();
+      /* @var \InjectorTestNullableParams $obj */
+      $obj = $injector->make(\InjectorTestNullableParams::class);
+
+      $this->assertNull($obj->instance);
+    }
+
+    public function testMakeInstanceWithParamDefaultBeingExplicitlySetToNullWithDeepDependency()
+    {
+      $injector = new Injector();
+      /* @var \InjectorTestNullableParamTypelessDependency $obj */
+      $obj = $injector->make(\InjectorTestNullableParamTypelessDependency::class);
+
+      $this->assertNull($obj->optional);
+    }
+    
+    public function testMakeInstanceWithParamDefaultBeingExplicitlySetToNullWithDeepDependencyDefined()
+    {
+      $injector = new Injector();
+      $injector->define(\TestInstanceTypelessParam::class, [
+        ':typelessParam' => 42
+      ]);
+    //   $injector->define(\InjectorTestNullableParamTypelessDependency::class, [
+    //     'optional' => \TestInstanceTypelessParam::class
+    //   ]);
+      /* @var \InjectorTestNullableParamTypelessDependency $obj */
+      $obj = $injector->make(\InjectorTestNullableParamTypelessDependency::class);
+
+      $this->assertInstanceOf(\TestInstanceTypelessParam::class, $obj->optional);
+    }
+
+    public function testMakeInstanceWithParamDefaultBeingExplicitlySetToNullWithSharingInstance()
+    {
+      $injector = new Injector();
+      $nullableParam = new \TestInstance();
+      $injector->share($nullableParam);
       /* @var \InjectorTestNullableParams $obj */
       $obj = $injector->make(\InjectorTestNullableParams::class);
 
@@ -788,6 +823,8 @@ class InjectorTest extends TestCase
 
     public function testDependencyWithDefaultValueThroughShare()
     {
+        // NOTE: this has been changed!!!!
+
         // Remember that if there's a type hint, it is constructed even if there's a default value:
         //
         // From the documentation ("Dependency resolution"):
@@ -799,7 +836,7 @@ class InjectorTest extends TestCase
         $injector = new Injector;
         //Instance is not shared, null default is used for dependency
         $instance = $injector->make('Auryn\Test\ConcreteDependencyWithDefaultValue');
-        $this->assertInstanceOf('StdClass', $instance->dependency);
+        $this->assertNull($instance->dependency);
 
         //Instance is explicitly shared, $instance is used for dependency
         $dependency = new \StdClass();

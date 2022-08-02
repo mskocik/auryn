@@ -631,7 +631,7 @@ var_dump($injector->execute('Example::myMethod', $args = [':arg2' => 42]));
 2. If a delegate callable is assigned for a class, its return result will always be used
 3. If a call-time definition is passed to `Auryn\Injector::make`, that definition will be used
 4. If a pre-defined definition exists, it will be used
-5. If a dependency is type-hinted, the Injector will recursively instantiate it subject to any implementations or definitions
+5. If a dependency is type-hinted AND without `null` as default value, the Injector will recursively instantiate it subject to any implementations or definitions
 6. If no type-hint exists and the parameter has a default value, the default value is injected
 7. If a global parameter value is defined that value is used
 8. Throw an exception because you did something stupid

@@ -541,11 +541,13 @@ class Injector
             // Injector has been told explicitly how to make this type
             if (array_key_exists($normalizedName, $this->aliases) ||
                 array_key_exists($normalizedName, $this->delegates) ||
-                array_key_exists($normalizedName, $this->shares) ||
-                class_exists($typeHint)) {
+                array_key_exists($normalizedName, $this->shares)
+            ) {
                 $obj = $this->make($typeHint);
-            }
-            else {
+            } // default value is not null, it means this optional param is meant to be set
+            elseif (class_exists($typeHint) && $reflParam->getDefaultValue() !== null) {
+                $obj = $this->make($typeHint);
+            } else {
               $obj = $reflParam->getDefaultValue();
             }
         } else {
