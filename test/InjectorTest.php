@@ -51,9 +51,9 @@ class InjectorTest extends TestCase
       $injector->define(\TestInstanceTypelessParam::class, [
         ':typelessParam' => 42
       ]);
-    //   $injector->define(\InjectorTestNullableParamTypelessDependency::class, [
-    //     'optional' => \TestInstanceTypelessParam::class
-    //   ]);
+      $injector->define(\InjectorTestNullableParamTypelessDependency::class, [
+        'optional' => \TestInstanceTypelessParam::class
+      ]);
       /* @var \InjectorTestNullableParamTypelessDependency $obj */
       $obj = $injector->make(\InjectorTestNullableParamTypelessDependency::class);
 
